@@ -34,6 +34,13 @@
   .badge { display:inline-block; padding:2px 8px; border-radius:999px; font-size:12px; background:#eef2ff; color:#4f46e5; }
   .hidden { display:none !important; }
   .empty { padding:24px; text-align:center; color:var(--muted); }
+  @media (max-width: 640px) {
+    .admin-wrap { padding:12px; }
+    .admin-head { flex-wrap:wrap; }
+    nav { flex-wrap:nowrap; overflow-x:auto; padding-bottom:4px; }
+    nav button { flex:0 0 auto; }
+    .table-wrap { overflow-x:auto; }
+  }
 </style>
 </head>
 <body>
@@ -139,8 +146,11 @@
 
   async function renderUsers() {
     const data = await api("/admin/users");
-    const rows = data.users.map((u) => `<tr><td>${escapeHTML(u.id)}</td><td>${escapeHTML(u.name)}</td><td>${escapeHTML(u.ip || "")}</td><td>${u.is_ai ? "AI" : "人类"}</td><td>${escapeHTML((u.created_at || "").slice(0, 16))}</td></tr>`).join("");
-    $("#content").innerHTML = `<div class="table-wrap"><table><thead><tr><th>ID</th><th>昵称</th><th>IP</th><th>类型</th><th>注册时间</th></tr></thead><tbody>${rows || `<tr><td colspan="5" class="empty">暂无</td></tr>`}</tbody></table></div>`;
+    const rows = data.users.map((u) => {
+      const online = !!u.last_seen_at && Date.now() - new Date(u.last_seen_at).getTime() < 120000;
+      return `<tr><td>${escapeHTML(u.id)}</td><td>${escapeHTML(u.name)}</td><td>${escapeHTML(u.ip || "")}</td><td>${online ? "在线" : "不在线"}</td><td>${u.is_ai ? "AI" : "人类"}</td><td>${escapeHTML((u.created_at || "").slice(0, 16))}</td><td>${u.is_ai ? "" : `<button data-action="user-reset-password" data-id="${escapeHTML(u.id)}" data-name="${escapeHTML(u.name)}" class="ghost">重置密码</button>`}</td></tr>`;
+    }).join("");
+    $("#content").innerHTML = `<div class="table-wrap"><table><thead><tr><th>ID</th><th>昵称</th><th>IP</th><th>状态</th><th>类型</th><th>注册时间</th><th>操作</th></tr></thead><tbody>${rows || `<tr><td colspan="7" class="empty">暂无</td></tr>`}</tbody></table></div>`;
   }
 
   async function renderBanned() {
@@ -192,6 +202,15 @@
       if (b.dataset.action === "post-reject") await api("/admin/posts/action", { method:"POST", body: JSON.stringify({ id:b.dataset.id, action:"reject" }) });
       if (b.dataset.action === "post-delete") { if (confirm("确认删除这条朋友圈？")) await api("/admin/posts/action", { method:"POST", body: JSON.stringify({ id:b.dataset.id, action:"delete" }) }); }
       if (b.dataset.action === "comment-delete") { if (confirm("确认删除这条评论？")) await api("/admin/comments/delete", { method:"POST", body: JSON.stringify({ id:b.dataset.id }) }); }
+      if (b.dataset.action === "user-reset-password") {
+        const newPassword = prompt(`为 ${b.dataset.name || "用户"} 设置新密码（至少 6 位）`);
+        if (newPassword && newPassword.length >= 6) {
+          await api("/admin/users/reset-password", { method:"POST", body: JSON.stringify({ id:b.dataset.id, password:newPassword }) });
+          alert("密码已重置");
+        } else if (newPassword) {
+          alert("密码至少需要 6 位");
+        }
+      }
       if (b.dataset.action === "banned-add") { const word = $("#newBannedWord")?.value.trim(); if (word) await api("/admin/banned-words/add", { method:"POST", body: JSON.stringify({ word }) }); }
       if (b.dataset.action === "banned-delete") await api("/admin/banned-words/delete", { method:"POST", body: JSON.stringify({ word:b.dataset.word }) });
       if (b.dataset.action === "flag-resolve") await api("/admin/flags/action", { method:"POST", body: JSON.stringify({ id:b.dataset.id, action:"resolve" }) });

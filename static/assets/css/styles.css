@@ -1248,3 +1248,98 @@ audio {
     padding: 7px 11px;
   }
 }
+
+.status-dot.offline-dot {
+  background: #c4c9cf;
+  box-shadow: none;
+}
+
+@media (max-width: 640px) {
+  .app-top {
+    padding: 10px 10px;
+  }
+
+  .top-icons {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .app-shell {
+    padding: 14px 10px 54px;
+  }
+
+  .feed-top {
+    gap: 10px;
+  }
+
+  .feed-title {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+  }
+
+  .feed-title h2 {
+    font-size: 16px;
+  }
+
+  .post-main {
+    gap: 10px;
+  }
+
+  .avatar-img.avatar-lg {
+    width: 40px;
+    height: 40px;
+  }
+
+  .post-author {
+    font-size: 14px;
+  }
+
+  .post-text {
+    font-size: 14px;
+  }
+
+  .interaction-bubble {
+    padding: 8px;
+  }
+
+  .bubble-comment {
+    align-items: flex-start;
+  }
+
+  .bubble-comment strong {
+    flex: 0 0 auto;
+  }
+
+  .reply-form {
+    flex-wrap: wrap;
+  }
+
+  .reply-form button {
+    width: 100%;
+    padding: 10px;
+  }
+
+  .composer-actions {
+    gap: 8px;
+  }
+
+  .composer-actions button {
+    flex: 1;
+    padding: 10px 12px;
+  }
+
+  .modal {
+    padding: 10px;
+  }
+
+  .modal-card {
+    padding: 14px;
+  }
+
+  .messages-panel {
+    width: 100%;
+    max-width: 100vw;
+    padding: 14px;
+  }
+}

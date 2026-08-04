@@ -70,6 +70,10 @@
       return postJSON("/auth", { action, email, password, display_name: displayName });
     },
 
+    setPresence(online) {
+      return postJSON("/auth", { action: online ? "heartbeat" : "offline" });
+    },
+
     getMe() {
       return postJSON("/auth", { action: "me" });
     },

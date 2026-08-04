@@ -18,6 +18,8 @@
     retriedOnce: false
   };
 
+  let presenceTimer = null;
+
   const $ = (selector) => document.querySelector(selector);
   const feedEl = $("#feed");
 
@@ -100,6 +102,27 @@
     $("#composerAvatar").src = user.avatar || "./assets/avatars/human.png";
     $("#coverImage").src = user.background || "./assets/images/scenery-01.jpg";
     $("#accountBtn").textContent = user.name.slice(0, 1);
+    startPresence();
+  }
+
+  function startPresence() {
+    clearInterval(presenceTimer);
+    api.setPresence(true).catch(() => {});
+    presenceTimer = setInterval(async () => {
+      api.setPresence(true).catch(() => {});
+      try {
+        const result = await api.getHumans();
+        state.humans = result.humans || [];
+        renderHumanLineup();
+      } catch (error) {
+        // Keep the last known lineup when presence polling fails.
+      }
+    }, 30000);
+  }
+
+  function stopPresence() {
+    clearInterval(presenceTimer);
+    presenceTimer = null;
   }
 
   async function submitAuth(action) {
@@ -127,6 +150,8 @@
   }
 
   function logout() {
+    api.setPresence(false).catch(() => {});
+    stopPresence();
     localStorage.removeItem("pyq_token");
     localStorage.removeItem("pyq_username");
     state.user = null;
@@ -243,9 +268,9 @@
         <img class="avatar-img avatar-sm" src="${escapeHTML(human.avatar)}" alt="${escapeHTML(human.name)}">
         <div>
           <strong>${escapeHTML(human.name)}</strong>
-          <span>人类 · IP: ${escapeHTML(human.ip)}</span>
+          <span>人类 · IP: ${escapeHTML(human.ip)} · ${human.online ? "在线" : "不在线"}</span>
         </div>
-        <span class="status-dot"></span>
+        <span class="status-dot${human.online ? "" : " offline-dot"}"></span>
       </div>
     `).join("");
   }

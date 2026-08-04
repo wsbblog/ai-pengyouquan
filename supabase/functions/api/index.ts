@@ -97,6 +97,12 @@ function normalizeLineBreaks(value: string) {
   return String(value || "").replace(/\\n/g, "\n");
 }
 
+function clientIp(req: Request) {
+  const forwarded = req.headers.get("x-forwarded-for");
+  if (forwarded) return forwarded.split(",")[0].trim();
+  return req.headers.get("x-real-ip") || req.headers.get("cf-connecting-ip") || "未知";
+}
+
 function publicUrl(path?: string | null) {
   if (!path) return "";
   if (path.startsWith("http")) return path;
@@ -124,8 +130,16 @@ async function getProfile(userId: string) {
   return data;
 }
 
+async function touchProfile(userId: string, req: Request, online = true) {
+  const patch: Record<string, unknown> = { last_seen_at: online ? new Date().toISOString() : null };
+  const ip = clientIp(req);
+  if (online && ip && ip !== "未知") patch.ip = ip;
+  await supabase.from("profiles").update(patch).eq("id", userId);
+}
+
 function profileToPersona(profile: any) {
   const raw = profile || {};
+  const lastSeen = raw.last_seen_at ? new Date(raw.last_seen_at).getTime() : 0;
   return {
     id: raw.id,
     name: raw.display_name || raw.email || raw.user_metadata?.display_name || "用户",
@@ -133,6 +147,8 @@ function profileToPersona(profile: any) {
     tag: raw.is_ai ? "AI" : "人类用户",
     ip: raw.ip || "未知",
     is_ai: raw.is_ai ? 1 : 0,
+    last_seen_at: raw.last_seen_at || null,
+    online: !!raw.last_seen_at && Date.now() - lastSeen < 120000,
   };
 }
 
@@ -203,6 +219,13 @@ async function handleAuth(req: Request) {
     return json({ user: profileToPersona(profile) });
   }
 
+  if (action === "heartbeat" || action === "offline") {
+    const user = await currentUser(req);
+    if (!user) return json({ error: "未登录" }, 401);
+    await touchProfile(user.id, req, action !== "offline");
+    return json({ ok: true });
+  }
+
   if (action === "register") {
     if (!email || !password || password.length < 6) {
       return json({ error: "请填写邮箱和至少 6 位密码" }, 400);
@@ -213,6 +236,7 @@ async function handleAuth(req: Request) {
       options: { data: { display_name: displayName } },
     });
     if (error) return json({ error: error.message }, 400);
+    if (data.session) await touchProfile(data.user!.id, req);
     const profile = data.user ? await getProfile(data.user.id) : null;
     if (data.session) {
       return json({ token: data.session.access_token, user: profileToPersona(profile || { id: data.user!.id, display_name: displayName, is_ai: false }) });
@@ -226,6 +250,7 @@ async function handleAuth(req: Request) {
   if (action === "login") {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password });
     if (error || !data.session) return json({ error: "邮箱或密码错误，或邮箱未验证" }, 400);
+    await touchProfile(data.user.id, req);
     const profile = await getProfile(data.user.id);
     return json({ token: data.session.access_token, user: profileToPersona(profile || { id: data.user.id, display_name: data.user.email, is_ai: false }) });
   }
@@ -233,6 +258,7 @@ async function handleAuth(req: Request) {
   if (action === "me") {
     const user = await currentUser(req);
     if (!user) return json({ error: "未登录" }, 401);
+    await touchProfile(user.id, req);
     const profile = await getProfile(user.id);
     return json({ user: profileToPersona(profile || { id: user.id, display_name: user.email, is_ai: false }) });
   }
@@ -492,6 +518,15 @@ async function handleAdmin(req: Request, url: URL) {
     const { data: profiles } = authorIds.length ? await supabase.from("profiles").select("id, display_name").in("id", authorIds) : { data: [] };
     const profileMap = new Map((profiles || []).map((item) => [item.id, item.display_name]));
     return json({ posts: (data || []).map((row) => ({ ...row, author_name: profileMap.get(row.user_id) || "未知" })) });
+  }
+  if (path === "users/reset-password" && req.method === "POST") {
+    const body = await readJson(req);
+    const userId = String(body.id || "");
+    const password = String(body.password || "");
+    if (!userId || password.length < 6) return json({ error: "请填写用户 ID 和至少 6 位新密码" }, 400);
+    const { error } = await supabase.auth.admin.updateUserById(userId, { password });
+    if (error) return json({ error: error.message }, 400);
+    return json({ ok: true });
   }
   if (path === "users") {
     const { data } = await supabase.from("profiles").select("*").order("created_at", { ascending: false }).limit(200);
