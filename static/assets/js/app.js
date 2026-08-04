@@ -14,7 +14,8 @@
     notifications: [],
     user: null,
     feedMode: "all",
-    busy: false
+    busy: false,
+    retriedOnce: false
   };
 
   const $ = (selector) => document.querySelector(selector);
@@ -181,8 +182,8 @@
   function renderError() {
     feedEl.innerHTML = `
       <div class="empty">
-        <strong>后端未接入</strong>
-        <p>当前是前端配置模式。接入后端后打开 <code>index.html?mock=0</code>。</p>
+        <strong>后端连接失败</strong>
+        <p>正在自动重试，请稍候。</p>
       </div>
     `;
   }
@@ -430,11 +431,16 @@
       state.personas = personaResult.personas || [];
       state.personaMap = Object.fromEntries(state.personas.map((persona) => [persona.id, persona]));
       state.humans = humanResult.humans || [];
+      state.retriedOnce = false;
       renderAll();
       $("#feedTitle").textContent = state.feedMode === "my" ? "我的朋友圈" : "最近朋友圈";
     } catch (error) {
       console.error(error);
       renderError();
+      if (!state.retriedOnce) {
+        state.retriedOnce = true;
+        setTimeout(() => loadFeed(), 1500);
+      }
     } finally {
       state.busy = false;
       $("#refreshBtn").classList.remove("spinning");
