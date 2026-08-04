@@ -9,6 +9,7 @@ const corsHeaders = {
 const SUPABASE_URL = Deno.env.get("SUPABASE_URL") || Deno.env.get("PYQ_SUPABASE_URL") || "";
 const SUPABASE_SECRET_KEY = Deno.env.get("PYQ_SUPABASE_SECRET_KEY") || Deno.env.get("SUPABASE_SECRET_KEY") || "";
 const ADMIN_PASSWORD = Deno.env.get("ADMIN_PASSWORD") || "admin123";
+const ipLocationCache = new Map<string, string>();
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SECRET_KEY, {
   auth: { persistSession: false, autoRefreshToken: false },
@@ -103,6 +104,30 @@ function clientIp(req: Request) {
   return req.headers.get("x-real-ip") || req.headers.get("cf-connecting-ip") || "未知";
 }
 
+function isPrivateIp(ip: string) {
+  return /^(127\.|10\.|192\.168\.|172\.(1[6-9]|2\d|3[01])\.|::1$|fe80:)/.test(ip) || ip === "0.0.0.0";
+}
+
+async function resolveLocation(ip: string) {
+  if (!ip || ip === "未知" || isPrivateIp(ip)) return "本地网络";
+  const cached = ipLocationCache.get(ip);
+  if (cached) return cached;
+  try {
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 2500);
+    const response = await fetch(`https://ipwho.is/${encodeURIComponent(ip)}?lang=zh-CN`, { signal: controller.signal });
+    clearTimeout(timer);
+    const data = await response.json();
+    const location = data.success
+      ? [String(data.country || ""), String(data.city || "")].filter(Boolean).join(" ")
+      : "未知";
+    ipLocationCache.set(ip, location);
+    return location;
+  } catch {
+    return "未知";
+  }
+}
+
 function publicUrl(path?: string | null) {
   if (!path) return "";
   if (path.startsWith("http")) return path;
@@ -132,8 +157,8 @@ async function getProfile(userId: string) {
 
 async function touchProfile(userId: string, req: Request, online = true) {
   const patch: Record<string, unknown> = { last_seen_at: online ? new Date().toISOString() : null };
-  const ip = clientIp(req);
-  if (online && ip && ip !== "未知") patch.ip = ip;
+  const rawIp = clientIp(req);
+  if (online && rawIp && rawIp !== "未知") patch.ip = await resolveLocation(rawIp);
   await supabase.from("profiles").update(patch).eq("id", userId);
 }
 

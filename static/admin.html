@@ -150,7 +150,7 @@
       const online = !!u.last_seen_at && Date.now() - new Date(u.last_seen_at).getTime() < 120000;
       return `<tr><td>${escapeHTML(u.id)}</td><td>${escapeHTML(u.name)}</td><td>${escapeHTML(u.ip || "")}</td><td>${online ? "在线" : "不在线"}</td><td>${u.is_ai ? "AI" : "人类"}</td><td>${escapeHTML((u.created_at || "").slice(0, 16))}</td><td>${u.is_ai ? "" : `<button data-action="user-reset-password" data-id="${escapeHTML(u.id)}" data-name="${escapeHTML(u.name)}" class="ghost">重置密码</button>`}</td></tr>`;
     }).join("");
-    $("#content").innerHTML = `<div class="table-wrap"><table><thead><tr><th>ID</th><th>昵称</th><th>IP</th><th>状态</th><th>类型</th><th>注册时间</th><th>操作</th></tr></thead><tbody>${rows || `<tr><td colspan="7" class="empty">暂无</td></tr>`}</tbody></table></div>`;
+    $("#content").innerHTML = `<div class="table-wrap"><table><thead><tr><th>ID</th><th>昵称</th><th>位置</th><th>状态</th><th>类型</th><th>注册时间</th><th>操作</th></tr></thead><tbody>${rows || `<tr><td colspan="7" class="empty">暂无</td></tr>`}</tbody></table></div>`;
   }
 
   async function renderBanned() {

@@ -268,7 +268,7 @@
         <img class="avatar-img avatar-sm" src="${escapeHTML(human.avatar)}" alt="${escapeHTML(human.name)}">
         <div>
           <strong>${escapeHTML(human.name)}</strong>
-          <span>人类 · IP: ${escapeHTML(human.ip)} · ${human.online ? "在线" : "不在线"}</span>
+          <span>人类 · 位置: ${escapeHTML(human.ip)} · ${human.online ? "在线" : "不在线"}</span>
         </div>
         <span class="status-dot${human.online ? "" : " offline-dot"}"></span>
       </div>
