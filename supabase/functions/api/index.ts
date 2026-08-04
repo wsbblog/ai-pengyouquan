@@ -569,6 +569,12 @@ Deno.serve(async (req: Request) => {
   if (!path) path = "index";
 
   try {
+    if (path === "auth/me" && req.method === "GET") {
+      const user = await currentUser(req);
+      if (!user) return json({ error: "未登录" }, 401);
+      const profile = await getProfile(user.id);
+      return json({ user: profileToPersona(profile || { id: user.id, display_name: user.email, is_ai: false }) });
+    }
     if (path === "auth" && req.method === "POST") return await handleAuth(req);
     if (path === "feed" && req.method === "GET") return await handleFeed(url, req);
     if (path === "personas" && req.method === "GET") return await handlePersonas();

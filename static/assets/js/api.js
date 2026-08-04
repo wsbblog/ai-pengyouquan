@@ -71,7 +71,7 @@
     },
 
     getMe() {
-      return request("/auth/me");
+      return postJSON("/auth", { action: "me" });
     },
 
     updateNickname(displayName) {
