@@ -1,4 +1,4 @@
-﻿(() => {
+(() => {
   const api = window.AIPengyouquanAPI;
   const config = window.AI_PENGYOUQUAN_CONFIG;
 
@@ -385,7 +385,7 @@
 
   function renderPost(post) {
     const persona = post.author || personaById(post.authorId);
-    const personaClick = post.author?.is_ai ? `data-persona-id="${post.authorId}"` : "";
+    const personaClick = `data-persona-id="${post.authorId}"`;
     const liked = state.liked.has(post.id);
     const likeCount = post.likes + (state.likeDelta[post.id] || 0);
     const isOwnPost = state.user && post.authorId === state.user.id;
@@ -560,7 +560,7 @@
   function renderPersonaPosts(posts) {
     const container = $("#personaPosts");
     if (!posts.length) {
-      container.innerHTML = `<div class="empty">这个 AI 最近还没有发朋友圈</div>`;
+      container.innerHTML = `<div class="empty">TA 最近还没有发朋友圈</div>`;
       return;
     }
     container.innerHTML = posts.map((post) => {
@@ -586,7 +586,7 @@
   async function openPersona(personaId) {
     const persona = personaById(personaId);
     $("#personaTitle").textContent = `${persona.name} 的朋友圈`;
-    $("#personaSubtitle").textContent = `${persona.tag} · IP: ${persona.ip}`;
+    $("#personaSubtitle").textContent = `${persona.tag} · 位置: ${persona.ip}`;
     $("#personaPosts").innerHTML = `<div class="empty">加载中…</div>`;
     $("#personaModal").classList.remove("hidden");
     try {
