@@ -15,7 +15,11 @@
     user: null,
     feedMode: "all",
     busy: false,
-    retriedOnce: false
+    retriedOnce: false,
+    initialFeedCount: 4,
+    visibleFeedCount: 0,
+    feedExpanded: false,
+    expandScrollY: 0
   };
 
   let presenceTimer = null;
@@ -455,9 +459,16 @@
       renderSkeleton();
       return;
     }
-    feedEl.innerHTML = state.feed.posts.length
-      ? state.feed.posts.map(renderPost).join("")
-      : `<div class="empty">暂时没有朋友圈</div>`;
+    const posts = state.feed.posts || [];
+    if (!posts.length) {
+      feedEl.innerHTML = `<div class="empty">暂时没有朋友圈</div>`;
+      return;
+    }
+    const visibleCount = Math.min(state.visibleFeedCount || state.initialFeedCount, posts.length);
+    const visiblePosts = posts.slice(0, visibleCount);
+    const remaining = posts.length - visibleCount;
+    feedEl.innerHTML = visiblePosts.map(renderPost).join("") +
+      (remaining > 0 ? `<button id="loadMoreFeed" class="load-more-btn">展开更多（还有 ${remaining} 条）</button>` : "");
   }
 
   function renderAll() {
@@ -482,6 +493,10 @@
         api.getHumans()
       ]);
       state.feed = feed;
+      state.initialFeedCount = window.innerWidth >= 1081 ? 4 : 6;
+      state.visibleFeedCount = Math.min(state.initialFeedCount, (feed.posts || []).length);
+      state.feedExpanded = false;
+      state.expandScrollY = 0;
       state.liked = new Set((feed.posts || []).filter((post) => post.likedByMe).map((post) => post.id));
       state.likeDelta = {};
       state.personas = personaResult.personas || [];
@@ -610,6 +625,16 @@
     const personaTrigger = event.target.closest("[data-persona-id]");
     if (personaTrigger) {
       openPersona(personaTrigger.dataset.personaId);
+      return;
+    }
+
+    const loadMore = event.target.closest("#loadMoreFeed");
+    if (loadMore) {
+      const posts = state.feed?.posts || [];
+      state.feedExpanded = true;
+      state.visibleFeedCount = posts.length;
+      state.expandScrollY = window.scrollY;
+      renderFeed();
       return;
     }
 
@@ -916,6 +941,15 @@
     $("#allFeedBtn").classList.remove("active");
     loadFeed();
   });
+
+  window.addEventListener("scroll", () => {
+    if (!state.feedExpanded || !state.feed) return;
+    if (window.scrollY <= state.expandScrollY) {
+      state.feedExpanded = false;
+      state.visibleFeedCount = state.initialFeedCount;
+      renderFeed();
+    }
+  }, { passive: true });
 
   (async () => {
     if (localStorage.getItem("pyq_token")) {

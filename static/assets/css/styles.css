@@ -1343,3 +1343,20 @@ audio {
     padding: 14px;
   }
 }
+
+.load-more-btn {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  color: #5b6067;
+  padding: 13px 16px;
+  font-weight: 800;
+  cursor: pointer;
+  margin-top: 4px;
+}
+
+.load-more-btn:hover {
+  background: #f4f2ed;
+}
