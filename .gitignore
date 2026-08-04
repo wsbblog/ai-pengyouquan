@@ -1,0 +1,11 @@
+﻿# 本地敏感配置不要打包/上传
+.env
+uploads/
+pyq.db
+__pycache__/
+
+# 部署工具缓存
+.vercel/
+node_modules/
+supabase/.temp/
+*.log
