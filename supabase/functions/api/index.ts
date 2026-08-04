@@ -456,11 +456,14 @@ async function handleUpload(req: Request) {
   const dataUrl = String(body.dataUrl || "");
   const payload = dataUrl.split(",")[1];
   if (!payload) return json({ error: "图片上传失败" }, 400);
+  const mimeMatch = dataUrl.match(/^data:(image\/[a-zA-Z0-9.+-]+);base64,/);
+  const contentType = mimeMatch ? mimeMatch[1] : "image/png";
+  const ext = contentType === "image/jpeg" ? "jpg" : contentType === "image/webp" ? "webp" : "png";
   const binary = atob(payload);
   const bytes = Uint8Array.from(binary, (char) => char.charCodeAt(0));
   const bucket = kind === "avatar" ? "avatars" : "backgrounds";
-  const path = `${user.id}/${kind}.png`;
-  const { error: uploadError } = await supabase.storage.from(bucket).upload(path, bytes, { contentType: "image/png", upsert: true });
+  const path = `${user.id}/${kind}.${ext}`;
+  const { error: uploadError } = await supabase.storage.from(bucket).upload(path, bytes, { contentType, upsert: true });
   if (uploadError) return json({ error: uploadError.message }, 400);
   const column = kind === "avatar" ? "avatar_url" : "background_url";
   const { data: profile, error } = await supabase.from("profiles").update({ [column]: `${bucket}/${path}` }).eq("id", user.id).select().single();

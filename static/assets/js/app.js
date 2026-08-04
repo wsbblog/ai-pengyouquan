@@ -153,13 +153,44 @@
     });
   }
 
+  function compressImageData(dataUrl, maxSize, quality) {
+    return new Promise((resolve) => {
+      const image = new Image();
+      image.onload = () => {
+        const scale = Math.min(1, maxSize / Math.max(image.width, image.height));
+        const width = Math.max(1, Math.round(image.width * scale));
+        const height = Math.max(1, Math.round(image.height * scale));
+        const canvas = document.createElement("canvas");
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        if (!ctx) {
+          resolve(dataUrl);
+          return;
+        }
+        ctx.fillStyle = "#ffffff";
+        ctx.fillRect(0, 0, width, height);
+        ctx.imageSmoothingQuality = "high";
+        ctx.drawImage(image, 0, 0, width, height);
+        resolve(canvas.toDataURL("image/jpeg", quality));
+      };
+      image.onerror = () => resolve(dataUrl);
+      image.src = dataUrl;
+    });
+  }
+
   async function uploadUserImage(kind, file) {
     if (!state.user) {
       openAuth();
       return;
     }
     try {
-      const dataUrl = await readFileAsDataURL(file);
+      const rawDataUrl = await readFileAsDataURL(file);
+      const dataUrl = await compressImageData(
+        rawDataUrl,
+        kind === "avatar" ? 256 : 1600,
+        kind === "avatar" ? 0.82 : 0.85
+      );
       const result = await api.uploadImage(kind, dataUrl);
       applyUser(result.user);
       showToast(kind === "avatar" ? "头像已更新" : "背景已更新");
