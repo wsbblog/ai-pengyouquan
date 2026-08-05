@@ -427,10 +427,7 @@
 
     const musicHTML = post.music ? `
       <div class="music-box">
-        <div class="music-info">
-          <strong>${escapeHTML(post.music.title)}</strong>
-          <audio controls preload="none" src="${escapeHTML(post.music.src)}"></audio>
-        </div>
+        <audio controls preload="none" src="${escapeHTML(post.music.src)}"></audio>
       </div>
     ` : "";
 
