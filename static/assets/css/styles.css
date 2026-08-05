@@ -1360,3 +1360,21 @@ audio {
 .load-more-btn:hover {
   background: #f4f2ed;
 }
+
+.site-disclaimer {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 18px 24px 30px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.7;
+  text-align: center;
+}
+
+.site-disclaimer p {
+  margin: 0;
+}
+
+.site-disclaimer p + p {
+  margin-top: 4px;
+}
