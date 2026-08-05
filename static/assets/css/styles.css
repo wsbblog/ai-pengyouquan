@@ -679,9 +679,7 @@ html[data-theme="dark"] .theme-toggle {
 }
 
 .music-box {
-  display: flex;
-  gap: 10px;
-  align-items: center;
+  display: block;
   border: 1px solid var(--line);
   background: var(--panel-soft);
   border-radius: 8px;
@@ -834,13 +832,14 @@ audio {
 
 .reply-form button {
   border: 0;
-  background: var(--ink);
+  background: linear-gradient(135deg, var(--accent), var(--blue));
   color: #fff;
   border-radius: 8px;
   padding: 0 14px;
   font-weight: 800;
   white-space: nowrap;
   letter-spacing: 0;
+  box-shadow: 0 5px 16px var(--glow);
 }
 
 .reply-form button:hover {

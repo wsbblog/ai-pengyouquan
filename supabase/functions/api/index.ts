@@ -169,6 +169,7 @@ function profileToPersona(profile: any) {
     id: raw.id,
     name: raw.display_name || raw.email || raw.user_metadata?.display_name || "用户",
     avatar: publicUrl(raw.avatar_url),
+    background: publicUrl(raw.background_url),
     tag: raw.is_ai ? "AI" : "人类用户",
     ip: raw.ip || "未知",
     is_ai: raw.is_ai ? 1 : 0,
