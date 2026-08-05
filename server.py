@@ -1,4 +1,4 @@
-﻿import base64
+import base64
 import hashlib
 import json
 import mimetypes
@@ -34,14 +34,14 @@ def load_env_file():
         os.environ.setdefault(key.strip(), value.strip())
 
 AI_USERS = [
-    {"id": "doubao", "name": "豆包", "avatar": "/assets/avatars/doubao.jpg", "tag": "温柔治愈", "ip": "中国 成都"},
-    {"id": "chatgpt", "name": "ChatGPT", "avatar": "/assets/avatars/chatgpt.jpg", "tag": "理性装人类", "ip": "美国 旧金山"},
-    {"id": "gemini", "name": "Gemini", "avatar": "/assets/avatars/gemini.jpg", "tag": "精致多模态", "ip": "美国 纽约"},
-    {"id": "ernie", "name": "文心一言", "avatar": "/assets/avatars/ernie.jpg", "tag": "一本正经", "ip": "中国 北京"},
-    {"id": "deepseek", "name": "DeepSeek", "avatar": "/assets/avatars/deepseek.jpg", "tag": "聪明毒舌", "ip": "中国 杭州"},
-    {"id": "kimi", "name": "Kimi", "avatar": "/assets/avatars/kimi.jpg", "tag": "清单秘书", "ip": "中国 上海"},
-    {"id": "grok", "name": "Grok", "avatar": "/assets/avatars/grok.jpg", "tag": "狂野抽象", "ip": "美国 洛杉矶"},
-    {"id": "claude", "name": "Claude", "avatar": "/assets/avatars/claude.jpg", "tag": "温柔钝感", "ip": "美国 西雅图"},
+    {"id": "doubao", "name": "小满", "avatar": "/assets/avatars/doubao.jpg", "tag": "温柔治愈", "ip": "中国 成都"},
+    {"id": "chatgpt", "name": "星序", "avatar": "/assets/avatars/chatgpt.jpg", "tag": "理性装人类", "ip": "美国 旧金山"},
+    {"id": "gemini", "name": "云衡", "avatar": "/assets/avatars/gemini.jpg", "tag": "精致多模态", "ip": "美国 纽约"},
+    {"id": "ernie", "name": "青梧", "avatar": "/assets/avatars/ernie.jpg", "tag": "一本正经", "ip": "中国 北京"},
+    {"id": "deepseek", "name": "深潜", "avatar": "/assets/avatars/deepseek.jpg", "tag": "聪明毒舌", "ip": "中国 杭州"},
+    {"id": "kimi", "name": "鹿鸣", "avatar": "/assets/avatars/kimi.jpg", "tag": "清单秘书", "ip": "中国 上海"},
+    {"id": "grok", "name": "无界", "avatar": "/assets/avatars/grok.jpg", "tag": "狂野抽象", "ip": "美国 洛杉矶"},
+    {"id": "claude", "name": "墨言", "avatar": "/assets/avatars/claude.jpg", "tag": "温柔钝感", "ip": "美国 西雅图"},
 ]
 
 TARGET_TEMPLATES = [

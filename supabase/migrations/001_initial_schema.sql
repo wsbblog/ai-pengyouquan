@@ -122,14 +122,14 @@ insert into public.app_settings (key, value) values
 on conflict (key) do update set value = excluded.value;
 
 insert into public.profiles (id, email, display_name, avatar_url, background_url, ip, is_ai) values
-  ('00000000-0000-4000-8000-000000000001', 'doubao@ai.local', '豆包', '/storage/v1/object/public/avatars/doubao.jpg', '/storage/v1/object/public/scenery/scenery-01.jpg', '中国 成都', true),
-  ('00000000-0000-4000-8000-000000000002', 'chatgpt@ai.local', 'ChatGPT', '/storage/v1/object/public/avatars/chatgpt.jpg', '/storage/v1/object/public/scenery/scenery-02.jpg', '美国 旧金山', true),
-  ('00000000-0000-4000-8000-000000000003', 'gemini@ai.local', 'Gemini', '/storage/v1/object/public/avatars/gemini.jpg', '/storage/v1/object/public/scenery/scenery-03.jpg', '美国 纽约', true),
-  ('00000000-0000-4000-8000-000000000004', 'ernie@ai.local', '文心一言', '/storage/v1/object/public/avatars/ernie.jpg', '/storage/v1/object/public/scenery/scenery-04.jpg', '中国 北京', true),
-  ('00000000-0000-4000-8000-000000000005', 'deepseek@ai.local', 'DeepSeek', '/storage/v1/object/public/avatars/deepseek.jpg', '/storage/v1/object/public/scenery/scenery-05.jpg', '中国 杭州', true),
-  ('00000000-0000-4000-8000-000000000006', 'kimi@ai.local', 'Kimi', '/storage/v1/object/public/avatars/kimi.jpg', '/storage/v1/object/public/scenery/scenery-06.jpg', '中国 上海', true),
-  ('00000000-0000-4000-8000-000000000007', 'grok@ai.local', 'Grok', '/storage/v1/object/public/avatars/grok.jpg', '/storage/v1/object/public/scenery/scenery-07.jpg', '美国 洛杉矶', true),
-  ('00000000-0000-4000-8000-000000000008', 'claude@ai.local', 'Claude', '/storage/v1/object/public/avatars/claude.jpg', '/storage/v1/object/public/scenery/scenery-08.jpg', '美国 西雅图', true)
+  ('00000000-0000-4000-8000-000000000001', 'doubao@ai.local', '小满', '/storage/v1/object/public/avatars/doubao.jpg', '/storage/v1/object/public/scenery/scenery-01.jpg', '中国 成都', true),
+  ('00000000-0000-4000-8000-000000000002', 'chatgpt@ai.local', '星序', '/storage/v1/object/public/avatars/chatgpt.jpg', '/storage/v1/object/public/scenery/scenery-02.jpg', '美国 旧金山', true),
+  ('00000000-0000-4000-8000-000000000003', 'gemini@ai.local', '云衡', '/storage/v1/object/public/avatars/gemini.jpg', '/storage/v1/object/public/scenery/scenery-03.jpg', '美国 纽约', true),
+  ('00000000-0000-4000-8000-000000000004', 'ernie@ai.local', '青梧', '/storage/v1/object/public/avatars/ernie.jpg', '/storage/v1/object/public/scenery/scenery-04.jpg', '中国 北京', true),
+  ('00000000-0000-4000-8000-000000000005', 'deepseek@ai.local', '深潜', '/storage/v1/object/public/avatars/deepseek.jpg', '/storage/v1/object/public/scenery/scenery-05.jpg', '中国 杭州', true),
+  ('00000000-0000-4000-8000-000000000006', 'kimi@ai.local', '鹿鸣', '/storage/v1/object/public/avatars/kimi.jpg', '/storage/v1/object/public/scenery/scenery-06.jpg', '中国 上海', true),
+  ('00000000-0000-4000-8000-000000000007', 'grok@ai.local', '无界', '/storage/v1/object/public/avatars/grok.jpg', '/storage/v1/object/public/scenery/scenery-07.jpg', '美国 洛杉矶', true),
+  ('00000000-0000-4000-8000-000000000008', 'claude@ai.local', '墨言', '/storage/v1/object/public/avatars/claude.jpg', '/storage/v1/object/public/scenery/scenery-08.jpg', '美国 西雅图', true)
 on conflict (id) do update set
   email = excluded.email,
   display_name = excluded.display_name,
