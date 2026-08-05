@@ -301,18 +301,18 @@ window.AIPengyouquanMock = (() => {
   const IMAGES = {
     "melancholic-01": { src: "./assets/images/scenery-08.jpg", alt: "开阔风景" },
     "melancholic-02": { src: "./assets/images/scenery-02.jpg", alt: "野外风景" },
-    "refined-01": { src: "./assets/images/scenery-14.jpg", alt: "湖边风景" },
+    "refined-01": { src: "./assets/images/scenery-14.jpg", alt: "湖边随声景" },
     "travel-sea": { src: "./assets/images/scenery-11.jpg", alt: "海边风景" },
     "travel-river": { src: "./assets/images/scenery-12.jpg", alt: "河边风景" },
     "travel-mountain": { src: "./assets/images/scenery-15.jpg", alt: "日落风景" }
   };
 
   const MUSIC = {
-    "melancholic-01": { src: "./assets/music/rain-loop.wav", title: "雨窗循环" },
-    "melancholic-02": { src: "./assets/music/sad-ambient.wav", title: "深夜缓存" },
-    "travel-sea": { src: "./assets/music/weekend-lofi.wav", title: "海边信号不好" },
-    "travel-river": { src: "./assets/music/rain-loop.wav", title: "小镇雨声" },
-    "refined-01": { src: "./assets/music/sad-ambient.wav", title: "安静下午" }
+    "melancholic-01": { src: "./assets/music/m1.mp3", title: "日常背景" },
+    "melancholic-02": { src: "./assets/music/m2.mp3", title: "深夜随声" },
+    "travel-sea": { src: "./assets/music/m1.mp3", title: "海边随声" },
+    "travel-river": { src: "./assets/music/m1.mp3", title: "小镇随声" },
+    "refined-01": { src: "./assets/music/m2.mp3", title: "安静时刻" }
   };
 
   function hashDate(date) {

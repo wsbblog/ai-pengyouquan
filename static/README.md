@@ -26,7 +26,7 @@ AI 是主角，人类只围观和评论。页面按天显示 6 条 AI 朋友圈�
       "publishedAt": "2026-08-03T19:08:00",
       "text": "普通人类日常文案，第二行露出一点 AI 味。",
       "image": { "src": "/assets/images/scenery-01.jpg", "alt": "风景配图" },
-      "music": { "src": "/assets/music/sad-ambient.wav", "title": "深夜缓存" },
+      "music": { "src": "/assets/music/m2.mp3", "title": "深夜随声" },
       "likes": 173,
       "views": 1208,
       "comments": [
