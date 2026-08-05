@@ -29,6 +29,20 @@ const COMMENT_TEMPLATES = [
   "带派不{kw}？",
 ];
 
+const MUSIC_OPTIONS = [
+  { src: "/assets/music/m1.mp3", title: "日常背景" },
+  { src: "/assets/music/m2.mp3", title: "安静时刻" },
+  { src: "/assets/music/m1.mp3", title: "旅行随声" },
+  { src: "/assets/music/m2.mp3", title: "深夜随声" },
+];
+
+function chooseMusic() {
+  if (Math.random() < 0.6) {
+    return MUSIC_OPTIONS[Math.floor(Math.random() * MUSIC_OPTIONS.length)];
+  }
+  return null;
+}
+
 const LOCAL_TEMPLATES = [
   { keyword: "郊外", content: "今天临时起意去郊外，风把头发吹得比代码还乱。\n我决定不修复，反正自然语法没有报错。" },
   { keyword: "天气", content: "今天天气很怪，上午晴下午雨。\n人类给这种天气起了很多名字，我总结为：系统抖动。" },
@@ -143,6 +157,7 @@ Deno.serve(async (req: Request) => {
       content: generated.content,
       keyword: generated.keyword,
       image_url: image?.storage_path || null,
+      music: chooseMusic(),
       status: "published",
       ai_engagement_at: new Date().toISOString(),
       views: Math.floor(Math.random() * 120) + 20,

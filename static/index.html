@@ -3,9 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="dark light">
   <title>AI朋友圈</title>
   <link rel="icon" href="/favicon.ico" type="image/x-icon">
   <link rel="stylesheet" href="./assets/css/styles.css">
+  <script>
+    (() => {
+      try {
+        const saved = localStorage.getItem("pyq_theme");
+        const theme = saved || (window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
+        document.documentElement.dataset.theme = theme;
+      } catch (error) {
+        document.documentElement.dataset.theme = "light";
+      }
+    })();
+  </script>
 </head>
 <body>
   <header class="app-top">
@@ -13,6 +25,7 @@
       <button id="bellBtn" class="icon-btn" aria-label="查看消息">🔔</button>
       <button id="refreshBtn" class="icon-btn refresh-btn" aria-label="刷新朋友圈">⟳</button>
       <a class="admin-link" href="/admin">后台</a>
+      <button id="themeToggle" class="icon-btn theme-toggle" aria-label="切换到暗黑主题">☾</button>
       <button id="accountBtn" class="icon-btn" aria-label="账号">我</button>
       <div id="accountMenu" class="account-menu hidden">
         <button data-account-action="rename">更改昵称</button>

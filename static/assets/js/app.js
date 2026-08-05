@@ -26,6 +26,27 @@
 
   const $ = (selector) => document.querySelector(selector);
   const feedEl = $("#feed");
+  const themeToggle = $("#themeToggle");
+
+  function setThemeIcon(theme) {
+    const isDark = theme === "dark";
+    themeToggle.textContent = isDark ? "☀" : "☾";
+    themeToggle.setAttribute("aria-label", isDark ? "切换到白天主题" : "切换到暗黑主题");
+  }
+
+  function applyTheme(theme) {
+    const nextTheme = theme === "dark" ? "dark" : "light";
+    document.documentElement.dataset.theme = nextTheme;
+    localStorage.setItem("pyq_theme", nextTheme);
+    setThemeIcon(nextTheme);
+  }
+
+  function pulseAction(element) {
+    if (!element) return;
+    element.classList.remove("pop");
+    void element.offsetWidth;
+    element.classList.add("pop");
+  }
 
   function pad(value) {
     return String(value).padStart(2, "0");
@@ -655,6 +676,7 @@
       api.sendInteraction("like", { postId: post.id, liked: !liked });
       renderFeed();
       renderLikeRank();
+      pulseAction(document.querySelector(`.post[data-post-id="${post.id}"] [data-action="like"]`));
     }
 
     if (button.dataset.action === "reply") {
@@ -675,6 +697,7 @@
       api.sendInteraction("view", { postId: post.id });
       renderFeed();
       renderViewRank();
+      pulseAction(document.querySelector(`.post[data-post-id="${post.id}"] [data-action="view"]`));
       showToast(`围观 +1，共 ${post.views} 次`);
     }
 
@@ -756,6 +779,11 @@
   $("#closeMessages").addEventListener("click", closeMessages);
   $("#messagesMask").addEventListener("click", closeMessages);
   $("#refreshBtn").addEventListener("click", loadFeed);
+  themeToggle.addEventListener("click", () => {
+    const nextTheme = document.documentElement.dataset.theme === "dark" ? "light" : "dark";
+    applyTheme(nextTheme);
+    pulseAction(themeToggle);
+  });
   $("#closePersona").addEventListener("click", closePersona);
   $("#personaModal").addEventListener("click", (event) => {
     if (event.target === event.currentTarget) closePersona();
@@ -950,6 +978,15 @@
       renderFeed();
     }
   }, { passive: true });
+
+  setThemeIcon(document.documentElement.dataset.theme === "dark" ? "dark" : "light");
+  if (!localStorage.getItem("pyq_theme")) {
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", (event) => {
+      const theme = event.matches ? "dark" : "light";
+      document.documentElement.dataset.theme = theme;
+      setThemeIcon(theme);
+    });
+  }
 
   (async () => {
     if (localStorage.getItem("pyq_token")) {

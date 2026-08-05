@@ -11,3 +11,7 @@ supabase/.temp/
 *.log
 
 .vercel
+
+# 根目录音乐源副本（static/assets/music 中已有部署副本）
+m1.mp3
+m2.mp3
