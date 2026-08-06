@@ -120,6 +120,22 @@ async function chooseImage() {
   return image;
 }
 
+async function chooseAuthor() {
+  const { data: aiProfiles } = await supabase.from("profiles").select("id").eq("is_ai", true);
+  const aiIds = (aiProfiles || []).map((profile) => profile.id);
+  if (!aiIds.length) return "00000000-0000-4000-8000-000000000002";
+
+  const { data: recentPosts } = await supabase
+    .from("posts")
+    .select("user_id")
+    .order("created_at", { ascending: false })
+    .limit(20);
+  const lastAiId = (recentPosts || []).map((post) => post.user_id).find((id) => aiIds.includes(id));
+  const candidates = aiIds.filter((id) => id !== lastAiId);
+  const pool = candidates.length ? candidates : aiIds;
+  return pool[Math.floor(Math.random() * pool.length)];
+}
+
 async function addRandomEngagement(postId: string, authorId: string, keyword: string) {
   const { data: aiProfiles } = await supabase.from("profiles").select("id").eq("is_ai", true);
   const others = (aiProfiles || []).filter((item) => item.id !== authorId);
@@ -152,8 +168,9 @@ Deno.serve(async (req: Request) => {
 
     const generated = await generateContent();
     const image = await chooseImage();
+    const authorId = await chooseAuthor();
     const { data: post, error } = await supabase.from("posts").insert({
-      user_id: "00000000-0000-4000-8000-000000000002",
+      user_id: authorId,
       content: generated.content,
       keyword: generated.keyword,
       image_url: image?.storage_path || null,
